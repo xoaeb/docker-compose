@@ -1,0 +1,31 @@
+version: '3'
+services:
+  frontend:
+    build:
+      context: ./my-react-app  # Path to your React app (adjust as needed)
+    ports:
+       - 80:80
+    depends_on:
+      - backend  # Ensure frontend waits for backend to start
+
+  backend:
+    build:
+      context: ./my-node-app  # Path to your Node.js backend (adjust as needed)
+    ports:
+      - "5000:5000"  # Exposing backend API port 5000
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/mydb  # MongoDB connection URI
+    depends_on:
+      - mongo  # Ensure backend waits for MongoDB to start
+
+  mongo:
+    image: mongo:latest  # Using the latest MongoDB image
+    container_name: mongo
+    volumes:
+      - mongo_data:/data/db  # Persist MongoDB data across container restarts
+    ports:
+      - "27017:27017"  # Exposing MongoDB port 27017
+
+volumes:
+  mongo_data:
+    driver: local
